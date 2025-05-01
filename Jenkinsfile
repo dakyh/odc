@@ -3,9 +3,9 @@ pipeline {
 
     environment {
         DOCKER_USER = 'dakyh'
-        BACKEND_IMAGE = "${DOCKER_USER}/odc_docker-backend"
-        FRONTEND_IMAGE = "${DOCKER_USER}/odc_docker-frontend"
-        MIGRATE_IMAGE = "${DOCKER_USER}/odc_docker-migrate"
+        BACKEND_IMAGE = "${DOCKER_USER}/filrouge-backend"
+        FRONTEND_IMAGE = "${DOCKER_USER}/filrouge-frontend"
+        DB_IMAGE = "${DOCKER_USER}/filrouge-db"
     }
 
     stages {

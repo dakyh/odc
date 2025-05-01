@@ -2,7 +2,7 @@ pipeline {
     agent any
 
     environment {
-        DOCKER_USER = 'nayoh'
+        DOCKER_USER = 'dakyh'
         BACKEND_IMAGE = "${DOCKER_USER}/odc_docker-backend"
         FRONTEND_IMAGE = "${DOCKER_USER}/odc_docker-frontend"
         MIGRATE_IMAGE = "${DOCKER_USER}/odc_docker-migrate"
@@ -12,18 +12,18 @@ pipeline {
         stage('Cloner le dépôt') {
             steps {
                 git branch: 'main',
-                    url: 'https://github.com/mbene-diop/ODC.git'
+                    url: 'https://github.com/dakyh/odc.git'
             }
         }
 
-        stage('Analyse SonarQube') {
+        /*stage('Analyse SonarQube') {
             steps {
                 withSonarQubeEnv('SonarQube') {
                     bat '"C:\\Users\\hp\\Desktop\\sonar-scanner\\bin\\sonar-scanner.bat" -Dsonar.projectKey=mben -Dsonar.sources=. -Dsonar.projectName="ODC" -Dsonar.sourceEncoding=UTF-8'
 
                 }
             }
-        }
+        }*/
 
         stage('Build des images') {
             steps {

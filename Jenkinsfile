@@ -5,7 +5,7 @@ pipeline {
         DOCKER_USER = 'dakyh'
         BACKEND_IMAGE = "${DOCKER_USER}/filrouge-backend"
         FRONTEND_IMAGE = "${DOCKER_USER}/filrouge-frontend"
-        DB_IMAGE = "${DOCKER_USER}/filrouge-db"
+        MIGRATE_IMAGE = "${DOCKER_USER}/filrouge-db"
     }
 
     stages {
@@ -16,42 +16,49 @@ pipeline {
             }
         }
 
-        /*stage('Analyse SonarQube') {
+        /*
+        stage('Analyse SonarQube') {
             steps {
                 withSonarQubeEnv('SonarQube') {
-                    bat '"C:\\Users\\hp\\Desktop\\sonar-scanner\\bin\\sonar-scanner.bat" -Dsonar.projectKey=mben -Dsonar.sources=. -Dsonar.projectName="ODC" -Dsonar.sourceEncoding=UTF-8'
-
+                    bat """
+                        C:\\Users\\hp\\Desktop\\sonar-scanner\\bin\\sonar-scanner.bat ^
+                        -Dsonar.projectKey=mben ^
+                        -Dsonar.sources=. ^
+                        -Dsonar.projectName=ODC ^
+                        -Dsonar.sourceEncoding=UTF-8
+                    """
                 }
             }
-        }*/
+        }
+        */
 
         stage('Build des images') {
             steps {
-                bat 'docker build -t %BACKEND_IMAGE%:latest ./Backend-main/odc'
-                bat 'docker build -t %FRONTEND_IMAGE%:latest ./Frontend-main'
-                bat 'docker build -t %MIGRATE_IMAGE%:latest ./Backend-main/odc'
+                bat "docker build -t ${env.BACKEND_IMAGE}:latest ./Backend-main/odc"
+                bat "docker build -t ${env.FRONTEND_IMAGE}:latest ./Frontend-main"
+                bat "docker build -t ${env.MIGRATE_IMAGE}:latest ./Backend-main/odc"
             }
         }
 
         stage('Push des images sur Docker Hub') {
             steps {
                 withDockerRegistry([credentialsId: 'filRo', url: ""]) {
-                    bat 'docker push %BACKEND_IMAGE%:latest'
-                    bat 'docker push %FRONTEND_IMAGE%:latest'
-                    bat 'docker push %MIGRATE_IMAGE%:latest'
+                    bat "docker push ${env.BACKEND_IMAGE}:latest"
+                    bat "docker push ${env.FRONTEND_IMAGE}:latest"
+                    bat "docker push ${env.MIGRATE_IMAGE}:latest"
                 }
             }
         }
 
         stage('Déploiement local avec Docker Compose') {
             steps {
-                bat '''
-                    docker rm -f BackendCont || true
-                    docker rm -f FrontendCont || true
-                    docker-compose down || true
+                bat """
+                    docker rm -f BackendCont || exit 0
+                    docker rm -f FrontendCont || exit 0
+                    docker-compose down || exit 0
                     docker-compose pull
                     docker-compose up -d --build
-                '''
+                """
             }
         }
     }
@@ -60,13 +67,13 @@ pipeline {
     post {
         success {
             mail to: 'nayoh.diop@gmail.com',
-                 subject: "réussite",
-                 body: "L'application a été déployée."
+                 subject: "✅ Déploiement réussi",
+                 body: "L'application a été déployée avec succès."
         }
         failure {
             mail to: 'nayoh.diop@gmail.com',
-                 subject: "❌ Échec",
-                 body: "Une erreur s’est produite"
+                 subject: "❌ Échec du déploiement",
+                 body: "Une erreur s’est produite pendant le pipeline Jenkins."
         }
     }
     */
